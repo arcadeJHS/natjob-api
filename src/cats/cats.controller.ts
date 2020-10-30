@@ -3,7 +3,7 @@ import { Controller, Get } from '@nestjs/common';
 interface cat { name: string, age: number };
 
 const cats: cat[] = [
-  { name: "Nata", age: 36 },
+  { name: "Nat", age: 36 },
   { name: "Birba", age: 15 }
 ];
 
