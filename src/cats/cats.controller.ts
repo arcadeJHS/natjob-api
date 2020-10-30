@@ -4,7 +4,9 @@ interface cat { name: string, age: number };
 
 const cats: cat[] = [
   { name: "Kitty", age: 5 },
-  { name: "Birba", age: 15 }
+  { name: "Birba", age: 15 },
+  { name: "Nat", age: 36 },
+  { name: "DimonniCat", age: 13 }
 ];
 
 // basic route: /cats
