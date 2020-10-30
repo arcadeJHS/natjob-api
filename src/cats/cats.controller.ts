@@ -3,11 +3,8 @@ import { Controller, Get } from '@nestjs/common';
 interface cat { name: string, age: number };
 
 const cats: cat[] = [
-  { name: "Kitty", age: 5 },
-  { name: "Birba", age: 15 },
   { name: "Nat", age: 36 },
-  { name: "DimonniCat", age: 13 },
-  { name: "Another Cat", age: 777 }
+  { name: "Birba", age: 15 }
 ];
 
 // basic route: /cats
