@@ -7,7 +7,7 @@ const cats: cat[] = [
   { name: "Birba", age: 15 },
   { name: "Nat", age: 36 },
   { name: "DimonniCat", age: 13 },
-  { name: "AUUUUUUUUU", age: 777 }
+  { name: "Another Cat", age: 777 }
 ];
 
 // basic route: /cats
