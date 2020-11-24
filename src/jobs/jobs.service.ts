@@ -1,6 +1,3 @@
-/** 
- * Aggregates different job services to respond as a unified and normalized way to the jobs controller
- */
 import { Injectable } from '@nestjs/common';
 import { CorriereLavoroService } from './services/corriere-lavoro/corriere-lavoro.service';
 import { Job } from './interfaces/job.interface';
@@ -12,8 +9,9 @@ export class JobsService {
     private readonly corriereLavoroService: CorriereLavoroService
   ) {}
 
-  findAll(): Job[] {
-    const corriereLavoroJobs = this.corriereLavoroService.findJobs();
+  // query different job services and aggregate a normalized response
+  async findAll(): Promise<Job[]> {
+    const corriereLavoroJobs = await this.corriereLavoroService.findJobs();
 
     return [
       ...corriereLavoroJobs
