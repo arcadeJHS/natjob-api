@@ -16,61 +16,66 @@ export class CorriereLavoroService {
   
   async findJobs(): Promise<Job[]> {
     try {
-    this.logger.log('- 1 -');
+      this.logger.log('- 1 -');
 
-    const browser = await puppeteer.launch();
-    this.logger.log('- 2 -');
+      const browser = await puppeteer.launch();
+      this.logger.log('- 2 -');
 
-    const page = await browser.newPage();
-    this.logger.log('- 3 -');
+      const page = await browser.newPage();
+      this.logger.log('- 3 -');
 
-    await page.goto(sourceUrl); 
-    this.logger.log('- 4 -');
+      await page.goto(sourceUrl);
+      this.logger.log('- 4 -');
 
-    // await page.waitForSelector('#searchInput', {visible: true});
-    await page.waitForSelector('input[name="cand_search-job_city"]', { visible: true });
-    this.logger.log('- 5 -');
+      // await page.waitForSelector('#searchInput', {visible: true});
+      await page.waitForSelector('input[name="cand_search-job_city"]', { visible: true });
+      this.logger.log('- 5 -');
     
-    // await page.type('#searchInput', 'impiegato');
-    await page.type('input[name="cand_search-job_city"]', 'Bellinzona');
-    this.logger.log('- 6 -');
+      // await page.type('#searchInput', 'impiegato');
+      await page.type('input[name="cand_search-job_city"]', 'Bellinzona');
+      this.logger.log('- 6 -');
 
-    await page.click('#submit');
-    this.logger.log('- 7 -');
+      await page.click('#submit');
+      this.logger.log('- 7 -');
     
-    // await page.waitForNavigation({ timeout: 0, waitUntil: "networkidle0" });
-    // await page.waitForSelector('.searchResults', { visible: true });
+      // await page.waitForNavigation({ timeout: 0, waitUntil: "networkidle0" });
+      // await page.waitForSelector('.searchResults', { visible: true });
     
-    const ajaxSearchResponse = await page.waitForResponse('https://bancadati.corrierelavoro.ch/ajax/common/ajax_search.php');
-    this.logger.log('- 8 -');
+      const ajaxSearchResponse = await page.waitForResponse('https://bancadati.corrierelavoro.ch/ajax/common/ajax_search.php');
+      this.logger.log('- 8 -');
 
-    const results = await ajaxSearchResponse.json();
-    this.logger.log('- 9 -');
+      const results = await ajaxSearchResponse.json();
+      this.logger.log('- 9 -');
 
-    /*
-    const results2 = await page.$$eval(".singleResult", nodes => {
-      return nodes.map(node => {
-        const h3 = node.querySelector('h3');
-        return h3.textContent;
+      /*
+      const results2 = await page.$$eval(".singleResult", nodes => {
+        return nodes.map(node => {
+          const h3 = node.querySelector('h3');
+          return h3.textContent;
+        });
       });
-    });
-    */
+      */
     
-    await browser.close();
-    this.logger.log('- 10 -');
+      await browser.close();
+      this.logger.log('- 10 -');
 
-    if (!results || !results.strings) { return []; }
+      if (!results || !results.strings) { return []; }
 
-    return results.strings.map((r) => {
-      return normalizeJob({
-        title: r.adName,
-        location: r.city,
-        publicationDate: r.date,
-        url: r.adId,
-        originalSource: r.empName,
-        description: r.desc
+      return results.strings.map((r) => {
+        return normalizeJob({
+          title: r.adName,
+          location: r.city,
+          publicationDate: r.date,
+          url: r.adId,
+          originalSource: r.empName,
+          description: r.desc
+        });
       });
-    });
+    }
+    catch (e) { 
+      this.logger.log('- ERROR -');
+      this.logger.log(e);
+    }
   }
 
 }
