@@ -15,24 +15,37 @@ export class CorriereLavoroService {
   private readonly logger = new Logger(CorriereLavoroService.name);
   
   async findJobs(): Promise<Job[]> {
-    this.logger.log('PARTITO!!!');
+    try {
+    this.logger.log('- 1 -');
 
     const browser = await puppeteer.launch();
+    this.logger.log('- 2 -');
+
     const page = await browser.newPage();
+    this.logger.log('- 3 -');
+
     await page.goto(sourceUrl); 
+    this.logger.log('- 4 -');
 
     // await page.waitForSelector('#searchInput', {visible: true});
     await page.waitForSelector('input[name="cand_search-job_city"]', { visible: true });
+    this.logger.log('- 5 -');
     
     // await page.type('#searchInput', 'impiegato');
     await page.type('input[name="cand_search-job_city"]', 'Bellinzona');
+    this.logger.log('- 6 -');
+
     await page.click('#submit');
+    this.logger.log('- 7 -');
     
     // await page.waitForNavigation({ timeout: 0, waitUntil: "networkidle0" });
     // await page.waitForSelector('.searchResults', { visible: true });
     
     const ajaxSearchResponse = await page.waitForResponse('https://bancadati.corrierelavoro.ch/ajax/common/ajax_search.php');
+    this.logger.log('- 8 -');
+
     const results = await ajaxSearchResponse.json();
+    this.logger.log('- 9 -');
 
     /*
     const results2 = await page.$$eval(".singleResult", nodes => {
@@ -44,6 +57,7 @@ export class CorriereLavoroService {
     */
     
     await browser.close();
+    this.logger.log('- 10 -');
 
     if (!results || !results.strings) { return []; }
 
