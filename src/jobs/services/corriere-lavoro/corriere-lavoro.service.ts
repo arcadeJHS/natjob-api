@@ -18,7 +18,7 @@ export class CorriereLavoroService {
     try {
       this.logger.log('- 1 -');
 
-      const browser = await puppeteer.launch();
+      const browser = await puppeteer.launch({args: ['--no-sandbox --disable-setuid-sandbox']});
       this.logger.log('- 2 -');
 
       const page = await browser.newPage();
@@ -75,6 +75,7 @@ export class CorriereLavoroService {
     catch (e) { 
       this.logger.log('- ERROR -');
       this.logger.log(e);
+      return e;
     }
   }
 
