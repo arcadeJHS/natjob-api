@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Job } from '../../interfaces/job.interface';
 import * as puppeteer from 'puppeteer';
 
@@ -11,8 +11,12 @@ const normalizeJob = (data) => {
 
 @Injectable()
 export class CorriereLavoroService {
+
+  private readonly logger = new Logger(CorriereLavoroService.name);
   
   async findJobs(): Promise<Job[]> {
+    this.logger.log('PARTITO!!!');
+
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(sourceUrl); 
