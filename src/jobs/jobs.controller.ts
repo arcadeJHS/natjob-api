@@ -11,8 +11,13 @@ export class JobsController {
   // /jobs
   @Get()
   async findAll(): Promise<Job[]> {
-    const jobs = await this.jobsService.findAll();
-    return jobs;
+    try {
+      const jobs = await this.jobsService.findAll();
+      return jobs;
+    }
+    catch (e) { 
+      return e;
+    }
   }
 
 }
