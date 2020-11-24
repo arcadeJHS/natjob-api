@@ -18,6 +18,10 @@ export class CorriereLavoroService {
     try {
       this.logger.log('- 1 -');
 
+      if (!puppeteer) { 
+        throw new Error('Puppeteer not available!');
+      }
+
       const browser = await puppeteer.launch({
         dumpio: true,
         args: ['--no-sandbox --disable-setuid-sandbox']
