@@ -23,7 +23,8 @@ export class CorriereLavoroService {
       }
 
       const browser = await puppeteer.launch({
-        dumpio: true
+        dumpio: true,
+        args: ['--no-sandbox']
       });
       this.logger.log('- 2 -');
 
