@@ -7,7 +7,10 @@ import { JobsModule } from './jobs/jobs.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `.env.${process.env.NODE_ENV}`
+    }),
     JobsModule
   ],
   controllers: [AppController, CatsController],
