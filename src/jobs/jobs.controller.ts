@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { JobsService } from './jobs.service';
-import { Job } from './interfaces/job.interface';
+import { JobsSource } from './interfaces/JobsSource.interface';
 
 // /jobs
 @Controller('jobs')
@@ -10,7 +10,7 @@ export class JobsController {
 
   // /jobs
   @Get()
-  async findAll(): Promise<Job[]> {
+  async findAll(): Promise<JobsSource[]> {
     try {
       const jobs = await this.jobsService.findAll();
       return jobs;
