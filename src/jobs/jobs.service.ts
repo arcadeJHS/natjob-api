@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CorriereLavoroService } from './services/corriere-lavoro/corriere-lavoro.service';
-import { JobsSource } from './interfaces/JobsSource.interface';
+import { JobsSource } from './models/JobsSource.interface';
+import { JobsQueryString } from './models/JobsQueryString.interface';
 
 @Injectable()
 export class JobsService {
@@ -10,8 +11,8 @@ export class JobsService {
   ) {}
 
   // query different job services and aggregate a normalized response
-  async findAll(): Promise<JobsSource[]> {
-    const corriereLavoroJobs = await this.corriereLavoroService.findJobs();
+  async findAll(query: JobsQueryString): Promise<JobsSource[]> {
+    const corriereLavoroJobs = await this.corriereLavoroService.findJobs(query);
 
     return [
       corriereLavoroJobs

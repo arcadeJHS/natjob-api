@@ -1,4 +1,4 @@
-import { Job } from '../interfaces/Job.interface';
+import { Job } from '../models/Job.interface';
 
 const millisecondsToDays = (milliseconds) => {
   const minutes = Math.floor(milliseconds / 60000);

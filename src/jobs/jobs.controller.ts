@@ -1,6 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { JobsService } from './jobs.service';
-import { JobsSource } from './interfaces/JobsSource.interface';
+import { JobsSource } from './models/JobsSource.interface';
+import { JobsQueryString } from './models/JobsQueryString.interface';
+import { defaultQueryString } from './models/DefaultQueryString';
 
 // /jobs
 @Controller('jobs')
@@ -10,8 +12,10 @@ export class JobsController {
 
   // /jobs
   @Get()
-  async findAll(): Promise<JobsSource[]> {
-    const jobs = await this.jobsService.findAll();
+  async findAll(@Query() query: JobsQueryString): Promise<JobsSource[]> {
+    query = { ...defaultQueryString, ...query };
+    
+    const jobs: JobsSource[] = await this.jobsService.findAll(query);
     return jobs;
   }
 
