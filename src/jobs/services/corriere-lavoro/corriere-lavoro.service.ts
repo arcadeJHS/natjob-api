@@ -49,7 +49,8 @@ export class CorriereLavoroService {
       // set LOCATION query param
       const selectorInputLocation = 'input[name="cand_search-job_city"]';
       await page.waitForSelector(selectorInputLocation, { visible: true });
-      await page.type(selectorInputLocation, query.location);
+      // await page.type(selectorInputLocation, query.location);
+      await page.$eval(selectorInputLocation, (el, location) => el.value = location, query.location);
 
       // set MAX DISTANCE query param
       const selectorInputMaxDistance = 'input[name="cand_search-max_distance"]';
@@ -60,7 +61,8 @@ export class CorriereLavoroService {
       if (query && query.jobKeyword) {
         const selectorInputJobKeyword = 'input[name="cand_search-keyword"]';
         await page.waitForSelector(selectorInputJobKeyword, { visible: true });
-        await page.type(selectorInputJobKeyword, query.jobKeyword);
+        // await page.type(selectorInputJobKeyword, query.jobKeyword);
+        await page.$eval(selectorInputJobKeyword, (el, jobKeyword) => el.value = jobKeyword, query.jobKeyword);
       }
 
       await page.click('#submit');
@@ -74,7 +76,7 @@ export class CorriereLavoroService {
         return jobsSource;
       }
 
-      const jobs: Job[] = items.strings.map(i => toJob(i));
+      const jobs: Job[] = items.strings.map(toJob);
 
       return {
         ...jobsSource,
