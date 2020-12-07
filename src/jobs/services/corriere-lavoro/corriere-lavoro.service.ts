@@ -22,7 +22,7 @@ const toJob = (item) => {
     publicationDate: `${item.date.slice(-4)}-${item.date.slice(3,5)}-${item.date.slice(0,2)}`,
     url: item.adId.replace('..', jobsSource.url),
     originalSource: item.empName,
-    originalSourceJobs: `${jobsSource.url}${item.empPage}`,
+    originalSourceJobsUrl: `${jobsSource.url}${item.empPage}`,
     description: item.desc
   };
 };

@@ -11,5 +11,9 @@ export const jobsByDaysAgo = (jobs: Job[], daysAgo: number = 7): Job[] => {
   const today = +new Date;
   return jobs.filter(j => {
     return millisecondsToDays(today - +new Date(j.publicationDate)) <= daysAgo;
+  }).sort((a, b) => {
+    if (a.publicationDate > b.publicationDate) { return -1; }
+    if (a.publicationDate < b.publicationDate) { return 1; }
+    return 0;
   });
 };

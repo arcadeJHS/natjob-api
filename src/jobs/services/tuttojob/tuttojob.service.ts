@@ -6,7 +6,7 @@ import { JobsSource } from '../../models/JobsSource.interface';
 import { jobsByDaysAgo } from '../../utillities/jobsByDaysAgo.filter';
 
 const jobsSource: JobsSource = {
-  name: 'TuttoJOB.ch',
+  name: 'TuttoJOB',
   url: 'https://www.tuttojob.ch',
   results: []
 };
@@ -20,10 +20,10 @@ const toJob = (item) => {
     title: item.title,
     description: item.description,
     url: `${jobsSource.url}/${item.url}`,
-    location: null,
-    publicationDate: null,
+    location: item.location,
+    publicationDate: item.publicationDate,
     originalSource: null,
-    originalSourceJobs: null
+    originalSourceJobsUrl: null
   };
 };
 
@@ -54,32 +54,46 @@ export class TuttojobService {
 
       const resultsListSelector = '#modeSearchViewList';
       await page.waitForSelector(resultsListSelector, { visible: true });
-      const rows = await page.$$eval(`${resultsListSelector} > table > tbody > tr`, rows => rows.map(row => {
-        const href = row.querySelector('td > a');
-        const url = href.getAttribute('href');
-        const title = href.querySelector('div:nth-child(1)').textContent;
-        const description = href.querySelector('div:nth-child(2)').textContent;
+      
+      const items = await page.$$eval(`${resultsListSelector} > table > tbody > tr`, (rows) => {
+        return rows.map(row => {
+          const href = row.querySelector('td > a');
+          const url = href.getAttribute('href');
+          const dataDivs = row.querySelectorAll('td > a > div');
+          const title = href.querySelector('div:nth-child(1)').textContent;
+          const description = (dataDivs.length === 3) ? href.querySelector('div:nth-child(2)').textContent : title;
 
-        return {
-          title,
-          description,
-          url
-        };
-      }));
+          const locationAndDateDiv = href.querySelector(`div:nth-child(${dataDivs.length})`);
+          const location = locationAndDateDiv.querySelector('div:nth-child(1) > div').textContent;
+          const publicationDateString = locationAndDateDiv.querySelector('div:nth-child(2)').textContent;
 
-      console.log(rows);
+          let date = new Date();
+          if (~publicationDateString.indexOf('giorn')) {
+            const daysNumber = Number(publicationDateString.replace('da', '').replace('giorno', '').replace('giorni', '').trim());
+            date.setDate(date.getDate() - daysNumber);
+          }
+          
+          return {
+            title,
+            description,
+            url,
+            location,
+            publicationDate: date.toISOString().slice(0, 10)
+          };
+        })
+      });
     
       await browser.close();
 
-      if (!rows || !rows.length) {
+      if (!items || !items.length) {
         return jobsSource;
       }
 
-      const jobs: Job[] = rows.map(toJob);
+      const jobs: Job[] = items.map(toJob);
 
       return {
         ...jobsSource,
-        results: jobs
+        results: jobsByDaysAgo(jobs, 7)
       };
     }
     catch (e) {

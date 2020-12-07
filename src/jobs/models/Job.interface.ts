@@ -6,6 +6,6 @@ export interface Job {
   publicationDate: string,      // online since
   url: string,                  // original job link from website
   originalSource: string,       // job original source
-  originalSourceJobs: string,   // original source jobs list page
+  originalSourceJobsUrl: string,   // original source jobs list page
   description: string           // job extended description
 }
