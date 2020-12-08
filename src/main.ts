@@ -8,12 +8,8 @@ async function bootstrap() {
   });
 
   const origin = process.env.WEBCLIENT_ORIGIN;
-  console.log('=== ORIGIN ===');
-  console.log(origin);
-  console.log('=== ORIGIN ===');
 
-  // app.enableCors({ origin });
-  app.enableCors(); 
+  app.enableCors({ origin });
   
   await app.listen(3000);
 }
