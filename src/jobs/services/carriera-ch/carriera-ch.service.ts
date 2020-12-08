@@ -67,7 +67,7 @@ export class CarrieraChService {
       });
 
       const page = await browser.newPage();
-      page.setDefaultTimeout(0);
+      // page.setDefaultTimeout(0);
 
       await page.goto(jobsSource.url);
 
