@@ -84,7 +84,7 @@ export class CorriereLavoroService {
       };
     }
     catch (e) {
-      this.logger.log(e);
+      this.logger.error(e);
       return e;
     }
   }
