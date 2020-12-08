@@ -84,8 +84,11 @@ export class CorriereLavoroService {
       };
     }
     catch (e) {
-      this.logger.error(e);
-      return e;
+      this.logger.error(e.message);
+      return {
+        ...jobsSource,
+        error: e.message
+      }
     }
   }
 
