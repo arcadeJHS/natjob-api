@@ -10,7 +10,7 @@ async function bootstrap() {
   const origin = process.env.WEBCLIENT_ORIGIN;
 
   // app.enableCors({ origin });
-  app.enableCors();
+  app.enableCors(); 
   
   await app.listen(3000);
 }
