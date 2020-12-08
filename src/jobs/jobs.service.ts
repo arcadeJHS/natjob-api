@@ -18,12 +18,12 @@ export class JobsService {
   async findAll(query: JobsQueryString): Promise<JobsSource[]> {
     const corriereLavoroJobs = await this.corriereLavoroService.findJobs(query);
     const tuttojobJobs = await this.tuttojobService.findJobs(query);
-    const carrieraChJobs = await this.carrieraChService.findJobs(query);
+    // const carrieraChJobs = await this.carrieraChService.findJobs(query);
 
     return [
       corriereLavoroJobs,
       tuttojobJobs,
-      carrieraChJobs
+      // carrieraChJobs
     ];
   }
 }
