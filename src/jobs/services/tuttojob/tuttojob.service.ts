@@ -39,8 +39,15 @@ export class TuttojobService {
       }
 
       const browser = await puppeteer.launch({
-        dumpio: true,
-        args: ['--no-sandbox']
+        args: [
+          '--no-sandbox',
+          '--disable-gpu',
+          '--disable-dev-shm-usage',
+          '--disable-setuid-sandbox',
+          '--no-first-run',
+          '--no-zygote',
+          '--single-process'
+        ]
       });
 
       const page = await browser.newPage();
@@ -50,7 +57,16 @@ export class TuttojobService {
         searchStartUrl = `${searchStartUrl}&searchText=${query.jobKeyword}`;
       }
 
-      await page.goto(searchStartUrl);
+      await page.setRequestInterception(true);
+      page.on('request', (req) => {
+        if (req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image' || req.resourceType() == 'script') {
+          req.abort();
+        } else {
+          req.continue();
+        }
+      });
+
+      await page.goto(searchStartUrl, { waitUntil: 'networkidle0', timeout: 0 });
 
       const resultsListSelector = '#modeSearchViewList';
       await page.waitForSelector(resultsListSelector, { visible: true });

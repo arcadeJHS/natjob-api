@@ -39,7 +39,6 @@ export class CorriereLavoroService {
       }
 
       const browser = await puppeteer.launch({
-        dumpio: true,
         args: ['--no-sandbox']
       });
 

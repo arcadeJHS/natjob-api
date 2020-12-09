@@ -61,15 +61,32 @@ export class CarrieraChService {
         throw new Error('Puppeteer not available!');
       }
 
+      // https://stackoverflow.com/questions/50931956/how-to-increase-navigation-timeout-when-running-puppeteer-tests-with-jest
       const browser = await puppeteer.launch({
-        dumpio: true,
-        args: ['--no-sandbox']
+        args: [
+          '--no-sandbox',
+          '--disable-gpu',
+          '--disable-dev-shm-usage',
+          '--disable-setuid-sandbox',
+          '--no-first-run',
+          '--no-zygote',
+          '--single-process'
+        ]
       });
 
       const page = await browser.newPage();
-      // page.setDefaultTimeout(0);
+      // optimize resource requests
+      // https://pptr.dev/#?product=Puppeteer&version=v5.5.0&show=api-pagesetrequestinterceptionvalue
+      await page.setRequestInterception(true);
+      page.on('request', (req) => {
+        if (req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image' || req.resourceType() == 'script') {
+          req.abort();
+        } else {
+          req.continue();
+        }
+      });
 
-      await page.goto(jobsSource.url);
+      await page.goto(jobsSource.url, { waitUntil: 'networkidle0', timeout: 0 });
 
       // set LOCATION query param
       const selectorInputLocation = '#form-filter-location';
@@ -83,31 +100,39 @@ export class CarrieraChService {
         await page.$eval(selectorInputJobKeyword, (el, jobKeyword) => el.value = jobKeyword, query.jobKeyword);
       }
     
-      const paginationSelector = 'main > section > div > div:nth-child(2) > a';
       const resultsListSelector = 'main.page-content section div.container table tbody';
       const submitButton = await page.waitForSelector('form[action="https://www.carriera.ch/cgi-bin/annunci_offerte_lavoro.cgi"] input[type="submit"]');
       
       await submitButton.click();
       await page.waitForNavigation();
       await page.waitForSelector(resultsListSelector, { visible: true });
-
-      // await page.screenshot({ path: 'src/jobs/services/carriera-ch/screenshot.png', fullPage: true });
       
       // get data from page 1
       let items = [];
       items.push(...await page.$$eval(`${resultsListSelector} > tr`, collectJobs));
 
       // get data from remaining pages
-      /*
+      const paginationSelector = 'main > section > div > div:nth-child(2) > a';
+
       const pagesUrl = await page.$$eval(paginationSelector, (pages) => { 
         return pages.map(p => p.getAttribute('href'));
       });
-      pagesUrl.forEach(async pageUrl => {
-        await page.goto(pageUrl);
-        await page.waitForSelector(resultsListSelector, { visible: true });
-        items.push(...await page.$$eval(`${resultsListSelector} > tr`, collectJobs));
-      });
-      */
+
+      for (let i = 0; i < pagesUrl.length; i++) {
+        items = items.concat(await getPagesData(pagesUrl[i]));
+      }
+
+      async function getPagesData(pageUrl) {
+        // avoid async race condistions
+        // https://pptr.dev/#?product=Puppeteer&version=v5.5.0&show=api-pageclickselector-options
+        // https://github.com/puppeteer/puppeteer/issues/1412
+        await Promise.all([
+          page.waitForNavigation({ waitUntil: 'networkidle2' }),
+          page.goto(pageUrl),
+          page.waitForSelector(resultsListSelector, { visible: true })
+        ]);
+        return await page.$$eval(`${resultsListSelector} > tr`, collectJobs);
+      }
     
       await browser.close();
 
@@ -119,8 +144,7 @@ export class CarrieraChService {
 
       return {
         ...jobsSource,
-        // results: jobsByDaysAgo(jobs, 7)
-        results: jobs
+        results: jobsByDaysAgo(jobs, 7)
       };
     }
     catch (e) {
