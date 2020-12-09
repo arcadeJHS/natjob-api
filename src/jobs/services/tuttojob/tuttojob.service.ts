@@ -53,9 +53,11 @@ export class TuttojobService {
       const page = await browser.newPage();
 
       // set JOB TYPE query param
+      /*
       if (query && query.jobKeyword) {
         searchStartUrl = `${searchStartUrl}&searchText=${query.jobKeyword}`;
       }
+      */
 
       await page.setRequestInterception(true);
       page.on('request', (req) => {
