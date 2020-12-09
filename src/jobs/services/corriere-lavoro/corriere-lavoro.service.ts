@@ -39,11 +39,29 @@ export class CorriereLavoroService {
       }
 
       const browser = await puppeteer.launch({
-        args: ['--no-sandbox']
+        args: [
+          '--no-sandbox',
+          '--disable-gpu',
+          '--disable-dev-shm-usage',
+          '--disable-setuid-sandbox',
+          '--no-first-run',
+          '--no-zygote',
+          '--single-process'
+        ]
       });
 
       const page = await browser.newPage();
-      await page.goto(searchStartUrl);
+
+      await page.setRequestInterception(true);
+      page.on('request', (req) => {
+        if (req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image') {
+          req.abort();
+        } else {
+          req.continue();
+        }
+      });
+
+      await page.goto(searchStartUrl, { waitUntil: 'networkidle0', timeout: 0 });
 
       // set LOCATION query param
       const selectorInputLocation = 'input[name="cand_search-job_city"]';
