@@ -14,7 +14,6 @@ export class JobsController {
   @Get()
   async findAll(@Query() query: JobsQueryString): Promise<JobsSource[]> {
     query = { ...defaultQueryString, ...query };
-    
     const jobs: JobsSource[] = await this.jobsService.findAll(query);
     return jobs;
   }
