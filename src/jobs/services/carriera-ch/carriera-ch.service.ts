@@ -136,6 +136,9 @@ export class CarrieraChService {
     
       await browser.close();
 
+      // filter out "jobs in Italy"
+      items = items.filter(j => !~j.location.toUpperCase().indexOf('ITALIA'));
+
       if (!items || !items.length) {
         return jobsSource;
       }
