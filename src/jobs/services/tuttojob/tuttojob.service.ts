@@ -4,6 +4,7 @@ import { Job } from '../../models/Job.interface';
 import { JobsQueryString } from '../../models/JobsQueryString.interface';
 import { JobsSource } from '../../models/JobsSource.interface';
 import { jobsByDaysAgo } from '../../utillities/jobsByDaysAgo.filter';
+import { jobsByKeyword } from '../../utillities/jobsByKeyword.filter';
 
 const jobsSource: JobsSource = {
   name: 'TuttoJOB',
@@ -103,11 +104,13 @@ export class TuttojobService {
         return jobsSource;
       }
 
-      const jobs: Job[] = items.map(toJob);
+      let jobs: Job[] = items.map(toJob);
+      jobs = jobsByDaysAgo(jobs, 7);
+      jobs = jobsByKeyword(jobs, query.jobKeyword);
 
       return {
         ...jobsSource,
-        results: jobsByDaysAgo(jobs, 7)
+        results: jobs
       };
     }
     catch (e) {

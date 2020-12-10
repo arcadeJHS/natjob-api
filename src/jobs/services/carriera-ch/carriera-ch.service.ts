@@ -4,6 +4,7 @@ import { Job } from '../../models/Job.interface';
 import { JobsQueryString } from '../../models/JobsQueryString.interface';
 import { JobsSource } from '../../models/JobsSource.interface';
 import { jobsByDaysAgo } from '../../utillities/jobsByDaysAgo.filter';
+import { jobsByKeyword } from '../../utillities/jobsByKeyword.filter';
 
 const jobsSource: JobsSource = {
   name: 'Carriera.ch',
@@ -136,23 +137,18 @@ export class CarrieraChService {
     
       await browser.close();
 
-      // filter out not relevant "jobs in Italy"
-      items = items.filter(j => !~j.location.toUpperCase().indexOf('ITALIA'));
-
-      // raw implmentation of "filter by keyword" (native carriera.ch website implementation is buggy, and filter randomly)
-      if (query && query.jobKeyword) {
-        items = items.filter(j => ~j.title.toUpperCase().indexOf(query.jobKeyword.toUpperCase()));
-      }
-
       if (!items || !items.length) {
         return jobsSource;
       }
 
-      const jobs: Job[] = items.map(toJob);
+      let jobs: Job[] = items.map(toJob);
+      jobs = jobsByDaysAgo(jobs, 7);
+      jobs = jobsByKeyword(jobs, query.jobKeyword);
+      jobs = jobs.filter(j => !~j.location.toUpperCase().indexOf('ITALIA'));  // filter out not relevant "jobs in Italy"
 
       return {
         ...jobsSource,
-        results: jobsByDaysAgo(jobs, 7)
+        results: jobs
       };
     }
     catch (e) {
