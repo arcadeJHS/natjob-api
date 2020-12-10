@@ -136,8 +136,13 @@ export class CarrieraChService {
     
       await browser.close();
 
-      // filter out "jobs in Italy"
+      // filter out not relevant "jobs in Italy"
       items = items.filter(j => !~j.location.toUpperCase().indexOf('ITALIA'));
+
+      // raw implmentation of "filter by keyword" (native carriera.ch website implementation is buggy, and filter randomly)
+      if (query && query.jobKeyword) {
+        items = items.filter(j => ~j.title.toUpperCase().indexOf(query.jobKeyword.toUpperCase()));
+      }
 
       if (!items || !items.length) {
         return jobsSource;

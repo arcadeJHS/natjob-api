@@ -13,7 +13,7 @@ const jobsSource: JobsSource = {
 
 // idZona       => 230 = Ticino
 // idDistretto  => 107 = Bellinzona
-let searchStartUrl = `${jobsSource.url}/search/?idFunzioni=0&idSettori=0&idContratti=0&idOccupazione=0&idZona=230&idDistretto=107`;
+const searchStartUrl = `${jobsSource.url}/search/?idFunzioni=0&idSettori=0&idContratti=0&idOccupazione=0&idZona=230&idDistretto=107`;
 
 const toJob = (item) => {
   return {
@@ -53,11 +53,7 @@ export class TuttojobService {
       const page = await browser.newPage();
 
       // set JOB TYPE query param
-      /*
-      if (query && query.jobKeyword) {
-        searchStartUrl = `${searchStartUrl}&searchText=${query.jobKeyword}`;
-      }
-      */
+      const queryUrl = (query && query.jobKeyword) ? `${searchStartUrl}&searchText=${query.jobKeyword}` : searchStartUrl;
 
       await page.setRequestInterception(true);
       page.on('request', (req) => {
@@ -68,7 +64,7 @@ export class TuttojobService {
         }
       });
 
-      await page.goto(searchStartUrl, { waitUntil: 'networkidle0', timeout: 0 });
+      await page.goto(queryUrl, { waitUntil: 'networkidle0', timeout: 0 });
 
       const resultsListSelector = '#modeSearchViewList';
       await page.waitForSelector(resultsListSelector, { visible: true });
