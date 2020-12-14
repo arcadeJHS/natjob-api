@@ -96,6 +96,7 @@ export class JobRoomService {
 
       // set JOB TYPE query param
       // suppose multiple words, separated by comma
+      searchBodyParams.keywords = [];
       if (query && query.jobKeyword) {
         searchBodyParams.keywords = query.jobKeyword.split(',');
       }
