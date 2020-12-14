@@ -78,11 +78,6 @@ export class JobRoomService {
       await page.setRequestInterception(true);
 
       page.on('request', (req) => {
-        /*
-        if (req.url() == searchStartUrl) { 
-
-        }
-        */
         if (req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image') {
           req.abort();
         }
