@@ -93,11 +93,12 @@ export class CorriereLavoroService {
         return jobsSource;
       }
 
-      const jobs: Job[] = items.strings.map(toJob);
+      let jobs: Job[] = items.strings.map(toJob);
+      jobs = jobsByDaysAgo(jobs, 7);
 
       return {
         ...jobsSource,
-        results: jobsByDaysAgo(jobs, 7)
+        results: jobs
       };
     }
     catch (e) {
