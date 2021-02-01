@@ -10,7 +10,23 @@ It is composed by two parts:
 
 ```bash
 $ npm install
+#or
+$ yarn install
 ```
+
+## Configuring the app
+Each part (backend and frontend) should behave, and needs to be configured and hosted, as an independent application.
+You need to enable CORS by setting the environment variable `WEBCLIENT_ORIGIN`:
+
+``` javascript
+// file: /src/main.ts
+
+app.enableCors({
+    origin: process.env.WEBCLIENT_ORIGIN
+});
+```
+
+You can use a .env file, as in the repo's example, or configure your environment variable as you prefer.
 
 ## Running the app
 
