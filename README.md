@@ -8,6 +8,8 @@ It is composed by two parts:
 
 > App demo: http://natjob.matteopiazza.wtf/#/
 
+![App Screenshot](app-screenshot.png "App Screenshot")
+
 ## Installation
 
 ```bash
